@@ -4,7 +4,15 @@ import scipy.special
 import tensorflow as ts
 
 
+def ReLuFunc(x):
+    # ReLu 函数
+    x = (numpy.abs(x) + x) / 2.0
+    return x
+
+
 class neuralNetwork(object):
+
+
     """
     初始化函数，初始化输入节点，输出节点和含隐层节点
     再之后定义，输入层到隐藏层的权重和隐藏层到输出层的权重，并且赋予随机初始值
@@ -20,13 +28,10 @@ class neuralNetwork(object):
         self.lr = learningrate
         """
         定义激活函数，激活函数主要解决了解决线性不可分的问题，不同激活函数的选取，激活函数种类很多，随着神经网络的优化，
-        激活函数的适应性越来越高, 我这里主要来尝试传统sigmoid函数（书上提供的），和Relu函数及其变体=》根据查资料主要是
-        为了解决sigmoid函数的梯度消失问题
+        激活函数的适应性越来越高, 我这里主要来尝试传统sigmoid函数（书上提供的）
         """
         self.activation_function = lambda x: scipy.special.expit(x)
-        #self.activation_function = lambda x: ts.nn.relu(x)
-        #self.activation_function = lambda x: ts.nn.crelu(x)
-        #self.activation_function = lambda x: ts.nn.leaky_relu(x)
+
         pass
 
     """
@@ -56,6 +61,8 @@ class neuralNetwork(object):
         final_inputs = numpy.dot(self.who, hidden_outputs)
         final_outputs = self.activation_function(final_inputs)
         return final_outputs
+
+
 
 
 
