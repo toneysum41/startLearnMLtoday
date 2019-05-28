@@ -69,8 +69,36 @@ def Run():
     pred = RNN(x, weights, biases)
     """
     tf.reduce_mean 函数用于计算张量tensor沿着指定的数轴上的的平均值，主要用作降维或者计算tensor的平均值。
+    tf.nn.softmax_cross_entropy_with_logits 包含2个步骤：1.RNN网络的最终输出做一个softmax分类 2.用分类的概率结果与实际
+    标签结果做交叉熵
+    分布实现此函数：
+    logits=tf.constant([[1.0,2.0,3.0],[1.0,2.0,3.0],[1.0,2.0,3.0]]) #网络输出结果
+    #step1:do softmax 
+    y=tf.nn.softmax(logits) 
+    y_=tf.constant([[0.0,0.0,1.0],[0.0,0.0,1.0],[0.0,0.0,1.0]]) #标签
+    #step2:do cross_entropy 
+    cross_entropy = -tf.reduce_sum(y_*tf.log(y))
+    如果求loss： 
+    cross_entropy = -tf.reduce_mean(y_*tf.log(y))
     """
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))  # 作用为，可以加快模型收敛速度
+    """
+    tf.train.AdamOptimizer: 是一个寻找全局最优点的优化算法,是基于SGD算法的优化=》SGD算法实现（随机梯度下降）
+    for i in range(m):
+         diff = np.dot(w, input_data[i]) - target_data[i]  # 训练集代入,计算误差值
+         # 采用随机梯度下降算法,更新一次权值只使用一组训练数据
+         w = w - alpha * diff * input_data[i] 
+         # ------------------------------终止条件判断-----------------------------------------
+         # 若没终止，则继续读取样本进行处理，如果所有样本都读取完毕了,则循环重新从头开始读取样本进行处理。
+ 
+     # ----------------------------------终止条件判断-----------------------------------------
+     if np.linalg.norm(w - error) < epsilon:     # 终止条件：前后两次计算出的权向量的绝对误差充分小  
+         finish = 1
+         break
+     else:
+          error = w
+    #具体Adam算法讲解参考：https://blog.csdn.net/leadai/article/details/79178787      
+    """
     train_op = tf.train.AdamOptimizer(learn_rate).minimize(cost)
     correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1)) #tf.atgmax对矩阵按行或列计算最大值
     accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32)) #先将correct_pred的数据类型用cast函数转化为float32,再用redcue_mean函数求平均值
