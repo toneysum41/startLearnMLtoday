@@ -1,7 +1,7 @@
 import tensorflow as tf
-#import matplotlib.pyplot as plt
+import matplotlib as mpl
 from tensorflow.contrib import rnn
-
+import matplotlib.pyplot as plt
 import numpy as np
 import mnist
 """
@@ -20,7 +20,7 @@ mnist = mnist.read_data_sets('MNIST_data', one_hot=True)
 
 #configuration variable
 learn_rate = 0.001
-training_times = 10000
+training_times = 20000
 
 batch_size = 128
 
@@ -34,13 +34,13 @@ x = tf.placeholder(tf.float32, [None, time_step_size, input_vec_size])  #创建�
 y = tf.placeholder(tf.float32, [None, n_classes])
 
 weights = {
-    'in': tf.Variable(tf.random_normal([input_vec_size, n_hidden_units])),
-    'out': tf.Variable(tf.random_normal([n_hidden_units, n_classes]))
+    'in': tf.Variable(tf.random_normal([input_vec_size, n_hidden_units]), name="weight_in"),
+    'out': tf.Variable(tf.random_normal([n_hidden_units, n_classes]), name="weight_out")
 }
 
 biases = {
-    'in': tf.Variable(tf.constant(0.1, shape=[n_hidden_units,])),
-    'out': tf.Variable(tf.constant(0.1, shape=[n_classes,]))
+    'in': tf.Variable(tf.constant(0.1, shape=[n_hidden_units,]), name="biases_in"),
+    'out': tf.Variable(tf.constant(0.1, shape=[n_classes,]), name="biases_out")
 }
 
 """
@@ -102,6 +102,7 @@ def Run():
     train_op = tf.train.AdamOptimizer(learn_rate).minimize(cost)
     correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1)) #tf.atgmax对矩阵按行或列计算最大值
     accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32)) #先将correct_pred的数据类型用cast函数转化为float32,再用redcue_mean函数求平均值
+    saver = tf.train.Saver()
     init = tf.global_variables_initializer()
     with tf.Session() as sess:
         sess.run(init)
@@ -113,13 +114,35 @@ def Run():
                 x: batch_xs,
                 y: batch_ys,
             })
-
             if step % 20 == 0:
+                """
+                                for i in range(0, len(batch_xs)):
+                    result = sess.run(correct_pred, feed_dict={x: batch_xs, y: batch_ys})
+                    if not result[i]:
+                        print('预测的值是：', sess.run(y, feed_dict={
+                            x: batch_xs,
+                            y: batch_ys,
+                        }))
+                        print('实际的值是：', sess.run(pred, feed_dict={
+                            x: batch_xs,
+                            y: batch_ys,
+                        }))
+                        one_pic_arr = np.reshape(batch_xs[i], (28, 28))
+                        pic_matrix = np.matrix(one_pic_arr, dtype="float")
+                        plt.imshow(pic_matrix)
+                        plt.show()
+                        #pylab.show()
+                        break
+                """
+
                 print(sess.run(accuracy, feed_dict={
                     x: batch_xs,
                     y: batch_ys,
                 }))
+
             step += 1
+        saver.save(sess, './model_results/LSTM_model.ckpt', global_step=step)
+
 
 Run()
 
