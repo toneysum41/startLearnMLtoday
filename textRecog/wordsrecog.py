@@ -4,12 +4,14 @@ import scipy.special
 import tensorflow as ts
 
 
-def ReLuFunc(x):
-    # ReLu 函数
-    x = (numpy.abs(x) + x) / 2.0
-    return x
+"""
+理解本段程序参考的信息来源：
+一本名叫：Python 神经网路编程的书（Author：塔里克·拉希德 (Tariq Rashid)）
+"""
 
-
+"""
+这个搭建的神经网络为最基础的2层神经网络=》 输入层，含隐层，输出层
+"""
 class neuralNetwork(object):
 
 

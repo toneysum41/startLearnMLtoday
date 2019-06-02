@@ -2,11 +2,10 @@ import numpy
 #import matplotlib.pyplot
 import scipy.special
 
+"""
+BP 神经网络来源于文字识别project中的基础神经网络
+"""
 
-def ReLuFunc(x):
-    # ReLu 函数
-    x = (numpy.abs(x) + x) / 2.0
-    return x
 
 
 class neuralNetwork(object):
