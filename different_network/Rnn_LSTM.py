@@ -20,7 +20,7 @@ mnist = mnist.read_data_sets('MNIST_data', one_hot=True)
 
 #configuration variable
 learn_rate = 0.001
-training_times = 20000
+training_times = 80000
 
 batch_size = 128
 
@@ -107,14 +107,17 @@ def Run():
     with tf.Session() as sess:
         sess.run(init)
         step = 0
+        preacc = 97
         while step * batch_size < training_times:
             batch_xs, batch_ys = mnist.train.next_batch(batch_size)
             batch_xs = batch_xs.reshape([batch_size, time_step_size, input_vec_size])
-            sess.run([train_op], feed_dict={
+            train_result=sess.run(train_op, feed_dict={
                 x: batch_xs,
                 y: batch_ys,
             })
+
             if step % 20 == 0:
+                print(train_result)
                 """
                                 for i in range(0, len(batch_xs)):
                     result = sess.run(correct_pred, feed_dict={x: batch_xs, y: batch_ys})
@@ -134,14 +137,16 @@ def Run():
                         #pylab.show()
                         break
                 """
-
-                print(sess.run(accuracy, feed_dict={
+                acc = sess.run(accuracy, feed_dict={
                     x: batch_xs,
                     y: batch_ys,
-                }))
-
+                })
+                print(acc)
+                if acc*100 > preacc:
+                    saver.save(sess, './model_results/LSTM_model.ckpt', global_step=step)
+                    preacc = acc*100
             step += 1
-        saver.save(sess, './model_results/LSTM_model.ckpt', global_step=step)
+
 
 
 Run()
