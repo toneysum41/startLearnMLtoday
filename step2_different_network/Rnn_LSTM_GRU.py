@@ -55,8 +55,15 @@ def RNN(X, weights, biases):
     """
     X_in = tf.reshape(X_in, [-1, time_step_size, n_hidden_units])
 
-
+    """
+    GRU
+    """
     cell = tf.contrib.rnn.GRUCell(n_hidden_units)  #创建细胞状态，可以理解为信息传送带，在这个传送带上信息基本不会被改变
+    """
+    LSTM
+    """
+    #cell = tf.contrib.rnn.BasicLSTMCell(n_hidden_units)
+    #cell = tf.contrib.rnn.DropoutWrapper(cell=cell, output_keep_prob=0.75)
     init_state = cell.zero_state(batch_size, dtype=tf.float32)
 
     outputs, final_state = tf.nn.dynamic_rnn(cell, X_in, initial_state=init_state, time_major=False)
