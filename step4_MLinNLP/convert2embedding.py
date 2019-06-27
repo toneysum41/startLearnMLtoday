@@ -21,20 +21,20 @@ class convert2Embedding:
             for line in input_data:
                 print(str(line))
                 for word in line:
-                    if word in embedding_dic.keys():
+                    if word in embedding_dic.wv.vocab.keys():
                         embedding_data.append(embedding_dic[word])
                     else:
                         print("The embedding dic can not find: "+word)
                 print(
                     '请输入label数字(1.generalPOI_search,2.generalAdv_search,3.specific_search,4.POI_recommend,5.food_recommend,6,comparable_search,7.Introduce_dish)：\n')
                 index = input()
-                embedding_sentence = [labels[index],embedding_data]
-                f = open(self.filepath, 'a')
+                embedding_sentence = [labels[index], embedding_data]
+                f = open(self.filepath, 'a', encoding='utf-8')
                 for i, w in enumerate(embedding_sentence[1]):
                     if i < len(embedding_sentence[1])-1:
-                        f.write(w + '\n')
+                        f.write(str(w) + '\n')
                     else:
-                        f.write(w+',')
+                        f.write(str(w)+',')
                 f.write(',' + str(embedding_sentence[0]) + '\n')
             f.close()
         else:
